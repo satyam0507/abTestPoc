@@ -123,6 +123,7 @@ function signInHandler(evt) {
             var email = error.email;
             // The firebase.auth.AuthCredential type that was used.
             var credential = error.credential;
+            showMsg('error', errorMessage);
             // ...
         });
     } else {
@@ -159,3 +160,35 @@ firebase.auth().onAuthStateChanged(function (user) {
         // No user is signed in.
     }
 });
+
+function showMsg(type, msg) {
+    var msgEl = document.querySelectorAll('.js-alert');
+    if (msgEl) {
+        const msgType = ['alert-warning', 'alert-success', 'alert-warning', 'alert-info','hide'];
+        var msgTypeSelected;
+        switch (type) {
+            case 'error': msgTypeSelected = msgType[0];
+                break;
+            case 'success': msgTypeSelected = msgType[1];
+                break;
+            case 'warning': msgTypeSelected = msgType[2];
+                break;
+            case 'info': msgTypeSelected = msgType[3];
+                break;
+            case 'hide': msgTypeSelected = 'hide';
+                break;
+            default: msgTypeSelected = 'hide';
+        }
+        msgEl.forEach(function (element) {
+            removePreviousClass(element, msgType);
+            element.classList.add(msgTypeSelected);
+            element.innerHTML = msg;
+        }, this);
+    }
+}
+
+function removePreviousClass(element, classArray) {
+    classArray.forEach(function (cl) {
+        element.classList.remove(cl);
+    }, this);
+}

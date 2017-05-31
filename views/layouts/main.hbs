@@ -21,6 +21,7 @@
             box-shadow: 0px 3px 4px rgba(0, 0, 0, .6);
             position: fixed;
             right: 20px;
+            z-index: 2;
         }
 
         #userInfo {
@@ -63,12 +64,18 @@
         }
 
         .hidden {
-            opacity: 0!important;
+            display: none!important;
+        }
+
+        .hide {
+            display: none!important;
         }
 
         .nv-card-head {
             min-height: 50px;
             background: rgba(0, 0, 0, .1);
+            display: flex;
+            align-items: center;
         }
 
         .nv-card-body {
@@ -78,6 +85,9 @@
         .nv-card-footer {
             min-height: 50px;
             background: rgba(0, 0, 0, .1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         .nv-userInfo>*:empty {
@@ -96,8 +106,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>
+                {{!--
                 <li class="nav-item">
                     <a class="nav-link signUp" href="#">login</a>
+                </li>--}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/abTest">A/B_Test</a>
                 </li>
             </ul>
             <div class="navbar-nav w-100"></div>
@@ -112,7 +126,7 @@
     </nav>
     <div class=" col-xs-12 col-sm-4 px-0  ">
         <div class="model-userInfo hidden mt-2 card">
-            <div class="nv-card-head pt-3 px-2">
+            <div class="nv-card-head px-2">
                 <h6 class="card-subtitle text-center">Et cupidatat cillum consectetur cillum non eu non magna.</h6>
             </div>
             <div class="card-block py-0 mt-2">
@@ -135,6 +149,9 @@
             </div>
         </div>
     </div>
+    <div class="alert  text-center js-alert" role="alert">
+
+    </div>
     <div class="container-fluid">
         <div class="row">
             {{{body}}}
@@ -153,6 +170,10 @@
 
     <script src="https://www.gstatic.com/firebasejs/4.1.0/firebase.js"></script>
     <script src="/js/auth.js"></script>
+
+    {{#if abTest}}
+    <script src="/js/abTest.js"></script>
+    {{/if}}
 
 </body>
 

@@ -23,6 +23,10 @@ app.get('/', (req, res) => {
     res.render('index');
 })
 
+app.get('/abTest', (req, res) => {
+    res.render('abTest', { abTest: true });
+})
+
 app.listen(port, () => {
     console.log('running on port :: ' + port);
 })
