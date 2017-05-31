@@ -1,0 +1,30 @@
+{
+  "name": "ab-test-poc",
+  "version": "1.0.0",
+  "description": "POC for A/B Test",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satyam0507/abTestPoc.git"
+  },
+  "keywords": [
+    "A/B",
+    "Test",
+    "Tool",
+    "javascript"
+  ],
+  "author": "satyam singh\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[s\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[S\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[S\u001b[C\u001b[C\u001b[C\u001b[C",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/satyam0507/abTestPoc/issues"
+  },
+  "homepage": "https://github.com/satyam0507/abTestPoc#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0"
+  }
+}
