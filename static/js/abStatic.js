@@ -1,5 +1,5 @@
 window.nvBootstrap = window.nvBootstrap || function (d) {
-
+    window.nvAB = window.nvAB || {};
     window.nvAB.getParams = window.nvAB.getParams || function (name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -48,7 +48,7 @@ window.nvBootstrap = window.nvBootstrap || function (d) {
         d.js.forEach(function (element) {
             nvAB.scriptLoader(element)
         }, this);
-        var e = function () {};
+        var e = function () { };
         window.nvBootstrap = e;
     }
 

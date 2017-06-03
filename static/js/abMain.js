@@ -64,8 +64,13 @@
             opacity: 1;
         }
         .nvCustom-el-clicked{
-            background:black!important;
-        }`
+            background:rgba(0,0,0,.4)!important;
+        }
+        .nv-noscroll{
+            overflow:hidden!important;
+        }
+       
+        `
     var d = document.createElement("style");
 
     d.type = "text/css";
@@ -113,6 +118,7 @@
     }
 
     function showEditor(target) {
+        document.body.classList.add('nv-noscroll');
         isEditorOpen = true;
         $(target).froalaEditor();
 

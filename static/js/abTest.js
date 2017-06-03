@@ -3,7 +3,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
         // User is signed in.
         showMsg('hide', '');
-        addIframe('iframe-hook', 'js-iframe', 'http://localhost:5000/?check=1');
+        addIframe('iframe-hook', 'js-iframe', 'http://localhost:3000/?check=1');
 
     } else {
         console.log('You have to login to view this page');
