@@ -1,0 +1,23 @@
+{
+  "name": "ab-test-poc",
+  "description": "POC for A/B Test",
+  "main": "server.js",
+  "authors": [
+    "satyam singh\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[s\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[S\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[S\u001b[C\u001b[C\u001b[C\u001b[C"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "A/B",
+    "Test",
+    "Tool",
+    "javascript"
+  ],
+  "homepage": "https://github.com/satyam0507/abTestPoc",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
