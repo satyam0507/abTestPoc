@@ -10,7 +10,8 @@ app.listen(app.get('port'), function () {
     console.log('Example app listening on port ' + app.get('port'));
 })
 
-app.use(express.static('static'));
+app.use('/static',express.static('static'));
+app.use('/bower_components',express.static('bower_components'));
 
 const hbs = exphbs.create({
     defaultLayout: 'main',

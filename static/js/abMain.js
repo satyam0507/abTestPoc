@@ -77,11 +77,31 @@
     function mouseClickHandler(evt) {
         evt.preventDefault();
         if (evt.target) {
+
+            // we first remove all custom class and atribute added
             removeClass('nvCustom-el-hovered');
             removeAttribute('data-tooltip');
-            addClass(evt.target, 'nvCustom-el-clicked');
-            var absPath = cssPath(evt.target);
+
+            // now get the css selector 
+
+
+            // with cssSelector
+            // if (UTILS) {
+            //     var absPath = UTILS.cssPath(evt.target);
+            //     console.log(absPath);
+            // } else {
+            //     throw new Error('Some thing went wrong');
+            // }
+
+            //with selectorQuery
+            var absPath = selectorQuery(evt.target);
             console.log(absPath);
+
+
+            // after this add the class for visual
+
+
+            addClass(evt.target, 'nvCustom-el-clicked');
         }
     }
 
@@ -135,22 +155,5 @@
         }, this);
     }
 
-    function cssPath(el) {
-        if (!(el instanceof Element)) return;
-        var path = [];
-        while (el.nodeType === Node.ELEMENT_NODE) {
-            var selector = el.nodeName.toLowerCase();
-            if (el.id) {
-                selector += '#' + el.id;
-            } else {
-                var sib = el,
-                    nth = 1;
-                while (sib.nodeType === Node.ELEMENT_NODE && (sib = sib.previousSibling) && nth++);
-                selector += ":nth-child(" + nth + ")";
-            }
-            path.unshift(selector);
-            el = el.parentNode;
-        }
-        return path.join(" > ");
-    }
+
 })(self, document);
