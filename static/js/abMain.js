@@ -67,6 +67,7 @@
             background:black!important;
         }`
     var d = document.createElement("style");
+
     d.type = "text/css";
     d.styleSheet ? d.styleSheet.cssText = nvStyle.join("") + toolTipStyle : d.appendChild(document.createTextNode(nvStyle.join("") + toolTipStyle));
     document.head.appendChild(d);
@@ -74,40 +75,54 @@
     document.body.addEventListener('click', mouseClickHandler);
     // document.body.addEventListener('')
 
+    var isEditorOpen = false;
+
     function mouseClickHandler(evt) {
         evt.preventDefault();
         if (evt.target) {
+            if (!isEditorOpen) {
+                // we first remove all custom class and atribute added
+                removeClass('nvCustom-el-hovered');
+                removeAttribute('data-tooltip');
 
-            // we first remove all custom class and atribute added
-            removeClass('nvCustom-el-hovered');
-            removeAttribute('data-tooltip');
-
-            // now get the css selector 
-
-
-            // with cssSelector
-            // if (UTILS) {
-            //     var absPath = UTILS.cssPath(evt.target);
-            //     console.log(absPath);
-            // } else {
-            //     throw new Error('Some thing went wrong');
-            // }
-
-            //with selectorQuery
-            var absPath = selectorQuery(evt.target);
-            console.log(absPath);
+                // now get the css selector 
 
 
-            // after this add the class for visual
+                // with cssSelector
+                // if (UTILS) {
+                //     var absPath = UTILS.cssPath(evt.target);
+                //     console.log(absPath);
+                // } else {
+                //     throw new Error('Some thing went wrong');
+                // }
+
+                //with selectorQuery
+                var absPath = selectorQuery(evt.target);
+                console.log(absPath);
 
 
-            addClass(evt.target, 'nvCustom-el-clicked');
+                // after this add the class for visual
+
+
+                addClass(evt.target, 'nvCustom-el-clicked');
+
+                showEditor(evt.target);
+            }
+
         }
     }
 
+    function showEditor(target) {
+        isEditorOpen = true;
+        $(target).froalaEditor();
+
+    }
+
     function mouseEnterHandler(evt) {
-        if (evt.target) {
-            addClass(evt.target, 'nvCustom-el-hovered');
+        if (!isEditorOpen) {
+            if (evt.target) {
+                addClass(evt.target, 'nvCustom-el-hovered');
+            }
         }
     }
 

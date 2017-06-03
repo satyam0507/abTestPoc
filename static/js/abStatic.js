@@ -17,30 +17,56 @@ window.nvBootstrap = window.nvBootstrap || function (d) {
         }
     }
     window.nvAB.scriptLoader = window.nvAB.scriptLoader || function (d) {
-        var e = function () {},
-            a = document,
+
+        var a = document,
             f = a.head || a.getElementsByTagName("head")[0],
             c, b;
         a.addEventListener && (c = a.createElement("script"),
             // c.async = 1,
             c.src = d,
-            f.appendChild(c),
-            window.nvBootstrap = e)
+            c.setAttribute('type', 'text/javascript'),
+            f.appendChild(c)
+        )
     };
-
+    window.nvAB.cssLoader = window.nvAB.cssLoader || function (d) {
+        var a = document,
+            f = a.head || a.getElementsByTagName("head")[0],
+            c, b;
+        a.addEventListener && (c = a.createElement("link"),
+            // c.async = 1,
+            c.href = d,
+            c.setAttribute('type', 'text/css'),
+            c.setAttribute('rel', 'stylesheet'),
+            f.appendChild(c)
+        )
+    }
     window.nvAB.caller = window.nvAB.caller || function (d) {
-        d.forEach(function (element) {
+
+        d.css.forEach(function (element) {
+            nvAB.cssLoader(element)
+        }, this);
+        d.js.forEach(function (element) {
             nvAB.scriptLoader(element)
         }, this);
+        var e = function () {};
+        window.nvBootstrap = e;
     }
 
     nvAB.getParams('check') == 1 && nvAB.inIframe ? nvAB.caller(d) : true;
 
 };
 
-nvBootstrap([
-    // '//localhost:9090/static/js/timeMe.js',
-    // '//localhost:9090/static/js/cssSelector.js',
-    '//localhost:9090/static/js/selectorQuery.js',
-    '//localhost:9090/static/js/abMain.js'
-]);
+nvBootstrap({
+    js: [
+        // '//localhost:9090/static/js/timeMe.js',
+        // '//localhost:9090/static/js/cssSelector.js',
+        '//localhost:9090/static/js/selectorQuery.js',
+        '//cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1//js/froala_editor.pkgd.min.js',
+        '//localhost:9090/static/js/abMain.js'
+    ],
+    css: [
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css'
+    ]
+});
