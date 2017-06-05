@@ -62,7 +62,7 @@ nvBootstrap({
         // '//localhost:9090/static/js/cssSelector.js',
         '//localhost:9090/static/js/selectorQuery.js',
         '//cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1//js/froala_editor.pkgd.min.js',
-        '//localhost:9090/static/js/abMain.js'
+        '//localhost:9090/static/js/abMain-0.1.js'
     ],
     css: [
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css',

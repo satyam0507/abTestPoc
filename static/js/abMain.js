@@ -64,12 +64,40 @@
             opacity: 1;
         }
         .nvCustom-el-clicked{
-            background:rgba(0,0,0,.4)!important;
+            
         }
         .nv-noscroll{
             overflow:hidden!important;
         }
-       
+        .nvEditorContainer{
+            display: flex;
+            position: fixed;
+            background: rgba(0,0,0,0.3);
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1030;
+            align-items: center;
+            justify-content: center;
+        }
+        .nvEditorContainer .nvEditor{
+                position: absolute;
+                z-index: 1031;
+                max-width: 900px;
+        }
+        .nvEditorContainer .nvEditorClose{
+                position: absolute;
+                z-index: 1031;
+                top:100px;
+                right:0;
+                height:50px;
+                width:50px;
+                background:black;
+        }
+        .hide{
+            display:none!important;
+        }
         `
     var d = document.createElement("style");
 
@@ -78,7 +106,34 @@
     document.head.appendChild(d);
     document.body.addEventListener('mouseover', mouseEnterHandler);
     document.body.addEventListener('click', mouseClickHandler);
-    // document.body.addEventListener('')
+
+
+
+    function addEditor(target) {
+
+        //create editor container element
+        var editorContainerEl = document.createElement('div');
+        editorContainerEl.setAttribute('class', 'nvEditorContainer hide');
+
+        //create editor element
+        var editorEl = document.createElement('div');
+        editorEl.setAttribute('class', 'nvEditor');
+
+        var closeEl = document.createElement('span');
+        closeEl.setAttribute('class', 'nvEditorClose');
+
+        editorContainerEl.appendChild(closeEl);
+
+        editorContainerEl.appendChild(editorEl);
+
+        //append the editor container element in the body
+        target.parentNode.appendChild(editorContainerEl);
+
+
+    }
+
+
+
 
     var isEditorOpen = false;
 
@@ -107,20 +162,45 @@
 
 
                 // after this add the class for visual
-
-
+                showEditor(evt.target);
                 addClass(evt.target, 'nvCustom-el-clicked');
 
-                showEditor(evt.target);
+
             }
 
         }
     }
 
+    function closeEditor(evt) {
+        document.body.classList.remove('nv-noscroll');
+        var editorEl = document.querySelector('.nvEditor');
+        var editorContainerEl = document.querySelector('.nvEditorContainer');
+        isEditorOpen = false;
+        editorContainerEl.classList.add('hide');
+        if (!$(editorEl).data('froala.editor')) {
+            $(editorEl).froalaEditor('destroy');
+        }
+
+        // if (editorContainerEl) {
+        //     editorContainerEl.remove();
+        // }
+
+    }
+
     function showEditor(target) {
+        addEditor(target);
         document.body.classList.add('nv-noscroll');
+        var editorEl = document.querySelector('.nvEditor');
+        var editorContainerEl = document.querySelector('.nvEditorContainer');
+        if (editorEl) {
+            editorEl.appendChild(target);
+        }
         isEditorOpen = true;
-        $(target).froalaEditor();
+        // $(editorEl).froalaEditor();
+        if (!$(editorEl).data('froala.editor')) {
+            $(editorEl).froalaEditor();
+        }
+        editorContainerEl.classList.remove('hide');
 
     }
 
@@ -178,3 +258,4 @@
 
 
 })(self, document);
+
