@@ -164,20 +164,26 @@ firebase.auth().onAuthStateChanged(function (user) {
 function showMsg(type, msg) {
     var msgEl = document.querySelectorAll('.js-alert');
     if (msgEl) {
-        const msgType = ['alert-warning', 'alert-success', 'alert-warning', 'alert-info','hide'];
+        const msgType = ['alert-warning', 'alert-success', 'alert-warning', 'alert-info', 'hide'];
         var msgTypeSelected;
         switch (type) {
-            case 'error': msgTypeSelected = msgType[0];
+            case 'error':
+                msgTypeSelected = msgType[0];
                 break;
-            case 'success': msgTypeSelected = msgType[1];
+            case 'success':
+                msgTypeSelected = msgType[1];
                 break;
-            case 'warning': msgTypeSelected = msgType[2];
+            case 'warning':
+                msgTypeSelected = msgType[2];
                 break;
-            case 'info': msgTypeSelected = msgType[3];
+            case 'info':
+                msgTypeSelected = msgType[3];
                 break;
-            case 'hide': msgTypeSelected = 'hide';
+            case 'hide':
+                msgTypeSelected = 'hide';
                 break;
-            default: msgTypeSelected = 'hide';
+            default:
+                msgTypeSelected = 'hide';
         }
         msgEl.forEach(function (element) {
             removePreviousClass(element, msgType);
@@ -191,4 +197,27 @@ function removePreviousClass(element, classArray) {
     classArray.forEach(function (cl) {
         element.classList.remove(cl);
     }, this);
+}
+
+var submitEl = document.querySelector('.nvSubmit');
+if (submitEl) {
+    submitEl.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        var pageUrl = document.getElementById('abTestPage').value;
+        var user = firebase.auth().currentUser;
+        if (user) {
+            var dataToSave = {
+                pageUrl: pageUrl
+            }
+            firebase.database().ref('user/' + user.uid + '/config').update(dataToSave).then(function (res) {
+                alert('updated');
+            }).catch(function (err) {
+                alert('someError');
+                console.log(err);
+            });
+        } else {
+            showMsg('warning', 'You are not <strong>loggedin</strong>');
+        }
+
+    })
 }

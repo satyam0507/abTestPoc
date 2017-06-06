@@ -3,7 +3,12 @@ firebase.auth().onAuthStateChanged(function (user) {
 
         // User is signed in.
         showMsg('hide', '');
-        addIframe('iframe-hook', 'js-iframe', 'http://localhost:5000/?check=1');
+        getPageData(user.uid).then(function (res) {
+            addIframe('iframe-hook', 'js-iframe', res);
+        }).catch(function (err) {
+            alert('SomeError');
+            console.log(err);
+        })
 
     } else {
         console.log('You have to login to view this page');
@@ -12,6 +17,17 @@ firebase.auth().onAuthStateChanged(function (user) {
         // No user is signed in.
     }
 });
+
+var userPageDomain = '';
+
+function getPageData(uid) {
+    return firebase.database().ref('user/' + uid + '/config').once('value').then(function (res) {
+        userPageDomain = res.val().pageUrl;
+        return userPageDomain + '?check=1&preview=1';
+    }).catch(function (err) {
+        return err;
+    })
+}
 
 function addIframe(hook, selector, source) {
     return new Promise((resolve, reject) => {
@@ -22,32 +38,11 @@ function addIframe(hook, selector, source) {
             iframeEl.setAttribute('class', selector);
             iframeEl.classList.add('css-iframe');
             iframeEl.setAttribute('src', source);
-            iframeEl.onload = function (evt) {
-                // addCustomClass();
-                // do something
-                // const iframeEl = document.getElementsByTagName("iframe")[0];
-                // const ifameDOM = iframeEl.contentWindow;
-                // ifameDOM.open();
-                // ifameDOM.appendChild("<script> (function (){console.log('hahaahaha')})()</script>");
-                // ifameDOM.close();
-                // console.log(evt);
-            }
+            iframeEl.onload = function (evt) {}
             hookEl.appendChild(iframeEl);
         }
-
     })
 }
-
-// function addCustomClass() {
-//     return new Promise((resolve, reject) => {
-//         const iframeEl = document.getElementsByTagName("iframe")[0];
-//         const ifameDOM = iframeEl.contentWindow;
-//         const el = ifameDOM.body.getElementsByTagName('*');
-//         for (var i = 0; i < el.length; i++) {
-//             el[i].classList.add('nv-hover');
-//         }
-//     })
-// }
 
 function showEl(selector) {
     var el = document.querySelectorAll('.' + selector);
@@ -64,5 +59,76 @@ function hideEl(selector) {
         el.forEach(function (element) {
             element.classList.add('hide');
         }, this);
+    }
+}
+
+window.addEventListener('message', messageListners);
+
+function messageListners(evt) {
+    console.log(evt.data);
+    if (evt.data.type === 'dataToSave') {
+        saveToDataBase(evt.data.nvData).then(function (res) {
+            if (res) {
+                if (evt.source) {
+                    evt.source.postMessage("saved", userPageDomain);
+                }
+            }
+        }).catch(function (err) {
+
+        });
+    }
+    if (evt.data.type === 'getDataServer') {
+
+        getDataServer(evt.data.nvData).then(function (res) {
+            console.log(res);
+            if (res && Array.isArray(res) && res.length > 0) {
+                if (evt.source) {
+                    evt.source.postMessage({
+                        type: 'dataFormServer',
+                        nvData: res
+                    }, userPageDomain);
+                }
+            }
+        }).catch(function (err) {
+
+        })
+
+    }
+}
+
+function getDataServer(reqData) {
+    var domain = reqData.domain;
+    var path = reqData.pathName;
+    var uid = firebase.auth().currentUser.uid;
+    return firebase.database().ref('user/' + uid + '/pageData').orderByChild('domain').equalTo(domain).once('value').then(function (res) {
+        var resArray = [];
+        var data = res.val();
+        if (data) {
+            Object.keys(data).forEach(function (key) {
+                var value = data[key];
+                if (value.hasOwnProperty('pathName') && value.pathName === path) {
+                    resArray.push(value);
+                }
+            });
+        }
+        return resArray;
+
+    }).catch(function (err) {
+        console.log(err);
+        return null;
+    })
+}
+
+function saveToDataBase(data) {
+    var user = firebase.auth().currentUser;
+    if (user) {
+        return firebase.database().ref('user/' + user.uid + '/pageData').push(data).then(function (res) {
+            return true;
+        }).catch(function (err) {
+            console.log(err);
+            return false;
+        })
+    } else {
+        showMsg('warning', 'You are not <strong>loggedin</strong>');
     }
 }

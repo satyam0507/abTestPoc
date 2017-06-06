@@ -48,25 +48,27 @@ window.nvBootstrap = window.nvBootstrap || function (d) {
         d.js.forEach(function (element) {
             nvAB.scriptLoader(element)
         }, this);
-        var e = function () { };
+        var e = function () {};
         window.nvBootstrap = e;
     }
 
     nvAB.getParams('check') == 1 && nvAB.inIframe ? nvAB.caller(d) : true;
 
 };
+// window.addEventListener('DOMContentLoaded', function (evt) {
+    nvBootstrap({
+        js: [
+            // '//localhost:9090/static/js/timeMe.js',
+            // '//localhost:9090/static/js/cssSelector.js',
+            '//localhost:9090/static/js/selectorQuery.js',
+            '//cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1//js/froala_editor.pkgd.min.js',
+            '//localhost:9090/static/js/abMain-0.1.js'
+        ],
+        css: [
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css'
+        ]
+    });
 
-nvBootstrap({
-    js: [
-        // '//localhost:9090/static/js/timeMe.js',
-        // '//localhost:9090/static/js/cssSelector.js',
-        '//localhost:9090/static/js/selectorQuery.js',
-        '//cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1//js/froala_editor.pkgd.min.js',
-        '//localhost:9090/static/js/abMain-0.1.js'
-    ],
-    css: [
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css'
-    ]
-});
+// })

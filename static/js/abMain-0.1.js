@@ -32,8 +32,13 @@
             const nvStyle = [".nvCustom-el-hovered {",
                 "background:rgba(0,0,0,0.2)!important; border-radius:2px;", "}"
             ];
+            var isEditorOpen = false;
+            var selector = '';
 
             var toolTipStyle = `[data-tooltip] {
+
+
+
                                 position: relative;
                                 z-index: 1031;
                                 cursor: pointer;
@@ -100,8 +105,11 @@
                             .nv-noscroll{
                                 overflow:hidden!important;
                             }
+                            .nvEditorContainer >*{
+                                z-index: 1030!important;
+                            }
                             .nvEditorContainer{
-                                display: flex;
+                                // display: flex;
                                 position: fixed;
                                 background: rgba(0,0,0,0.3);
                                 top: 0;
@@ -122,9 +130,15 @@
                                     z-index: 1031;
                                     top:100px;
                                     right:0;
-                                    height:50px;
-                                    width:50px;
-                                    background:black;
+                                    // height:50px;
+                                    width:70px;
+                                    // background:black;
+                            }
+                            .nvEditorContainer .nvEditorSubmit{
+                                    position: absolute;
+                                    z-index: 1031;
+                                    top:100px;
+                                    right:80px;
                             }
                             .hide{
                                 display:none!important;
@@ -134,13 +148,169 @@
 
 
 
+
             function initialize() {
+                var isPreview = getParams('preview');
+                if (isPreview) {
+                    postMessage({
+                        type: 'getDataServer',
+                        nvData: {
+                            domain: location.host,
+                            pathName: location.pathname,
+                        }
+                    })
+                }
                 var d = document.createElement("style");
                 d.type = "text/css";
                 d.styleSheet ? d.styleSheet.cssText = nvStyle.join("") + toolTipStyle : d.appendChild(document.createTextNode(nvStyle.join("") + toolTipStyle));
                 document.head.appendChild(d);
                 document.body.addEventListener('mouseover', mouseEnterHandler);
                 document.body.addEventListener('click', mouseClickHandler);
+                window.addEventListener("message", receiveMessage, false);
+
+            }
+
+            function getParams(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            };
+
+            function receiveMessage(evt) {
+                console.log(evt.data);
+                if (evt.data.type === "dataFormServer") {
+                    evt.data.nvData.forEach(function (obj) {
+                        manipulateDom(obj.selector, obj.changes)
+                    }, this);
+                }
+            }
+
+            function manipulateDom(selector, changes) {
+                var previousEl = document.querySelector(selector);
+                var containerSpan = document.createElement('span');
+                containerSpan.innerHTML = changes;
+                if (previousEl) {
+                    previousEl.parentNode.insertBefore(containerSpan.childNodes[0], previousEl);
+                    previousEl.remove();
+                }
+            }
+
+            function mouseClickHandler(evt) {
+                evt.preventDefault();
+                if (evt.target && !(evt.target.classList.contains('nvEditorClose') || evt.target.classList.contains('nvEditorSubmit'))) {
+                    if (!isEditorOpen) {
+
+                        // we first remove all custom class and atribute added
+                        removeClass('nvCustom-el-hovered');
+                        removeAttribute('data-tooltip');
+
+                        // now get the css selector 
+                        //with selectorQuery
+
+                        var absPath = selectorQuery(evt.target);
+                        // var obj = {
+                        //     absPath:absPath,
+                        // }
+                        console.log(absPath);
+                        // selectorArray.push(obj);
+                        selector = absPath;
+
+
+                        // after this add the class for visual
+                        showEditor(evt.target);
+                        addClass(evt.target, 'nvCustom-el-clicked');
+                    }
+
+                }
+            }
+
+            function mouseEnterHandler(evt) {
+                if (!isEditorOpen) {
+                    if (evt.target) {
+                        addClass(evt.target, 'nvCustom-el-hovered');
+                    }
+                }
+            }
+
+            function closeEditor() {
+                document.body.classList.remove('nv-noscroll');
+                var editorEl = document.querySelector('.nvEditor');
+                var editorContainerEl = document.querySelector('.nvEditorContainer');
+                var previewEl = document.querySelector('#nvPreview-editor');
+                var targetEl = document.querySelector('.hide.nvTarget');
+                targetEl.classList.remove('hide');
+                editorContainerEl.classList.add('hide');
+                $(editorEl).froalaEditor('destroy');
+                previewEl.remove();
+                editorContainerEl.remove();
+                isEditorOpen = false;
+            }
+
+            function submitEditor() {
+                var editedStr = $('.nvEditorContainer .nvEditor').froalaEditor('html.get');
+                var parentNode = $('.nvEditorContainer')[0].parentNode;
+                closeEditor();
+                var changes = showEditedContent(editedStr, parentNode);
+                var dataToSend = {
+                    type: 'dataToSave',
+                    nvData: {
+                        selector: selector,
+                        changes: changes,
+                        domain: location.host,
+                        pathName: location.pathname
+                    }
+
+                }
+                postMessage(dataToSend);
+
+            }
+
+            function showEditedContent(editedStr, parentNode) {
+                var el = parentNode.querySelector('.nvTarget.nvCustom-el-clicked');
+                var containerSpan = document.createElement('span');
+                containerSpan.innerHTML = editedStr;
+                parentNode.insertBefore(containerSpan.childNodes[0], el);
+                el.remove();
+                return editedStr;
+            }
+
+            function showEditor(target) {
+                // remove scroll from body
+
+                // TODO
+                // we may scroll the view so that the selected element's preview can we seen 
+
+
+                /* document.body.classList.add('nv-noscroll');*/
+
+
+                // add preview to dom 
+                var preViewContainer = addPreview(target);
+
+                //add editor to dom
+                var editorContainerEl = addEditor(target);
+
+
+                //initialize editor
+                var editorEl = editorContainerEl.querySelector('.nvEditor');
+                if (editorEl) {
+                    editorEl.appendChild(target.cloneNode(true));
+                }
+                if (!$(editorEl).data('froala.editor')) {
+                    $(editorEl).froalaEditor().on('froalaEditor.contentChanged', function (e, editor) {
+                        $(preViewContainer).html(editor.html.get());
+                    });
+                }
+                editorContainerEl.classList.remove('hide');
+                isEditorOpen = true;
+
+                // hide the original el
+                target.classList.add('hide');
+                target.classList.add('nvTarget');
 
             }
 
@@ -154,110 +324,46 @@
                 var editorEl = document.createElement('div');
                 editorEl.setAttribute('class', 'nvEditor');
 
-                var closeEl = document.createElement('span');
+                var closeEl = document.createElement('button');
                 closeEl.setAttribute('class', 'nvEditorClose');
+                closeEl.setAttribute('onClick', 'nvABTest.closeEditor()');
+                closeEl.innerText = 'Close';
 
-                editorContainerEl.appendChild(closeEl);
+                var submitEl = document.createElement('button');
+                submitEl.setAttribute('class', 'nvEditorSubmit');
+                submitEl.setAttribute('onClick', 'nvABTest.submitEditor()');
+                submitEl.innerText = 'Submit';
 
                 editorContainerEl.appendChild(editorEl);
+                editorContainerEl.appendChild(closeEl);
+                editorContainerEl.appendChild(submitEl);
 
                 //append the editor container element in the body
+
                 target.parentNode.appendChild(editorContainerEl);
-
-
-            }
-
-
-
-
-            var isEditorOpen = false;
-
-            function mouseClickHandler(evt) {
-                evt.preventDefault();
-                if (evt.target) {
-                    if (!isEditorOpen) {
-                        // we first remove all custom class and atribute added
-                        removeClass('nvCustom-el-hovered');
-                        removeAttribute('data-tooltip');
-
-                        // now get the css selector 
-
-
-                        // with cssSelector
-                        // if (UTILS) {
-                        //     var absPath = UTILS.cssPath(evt.target);
-                        //     console.log(absPath);
-                        // } else {
-                        //     throw new Error('Some thing went wrong');
-                        // }
-
-                        //with selectorQuery
-                        var absPath = selectorQuery(evt.target);
-                        console.log(absPath);
-
-
-                        // after this add the class for visual
-                        showEditor(evt.target);
-                        addClass(evt.target, 'nvCustom-el-clicked');
-
-
-                    }
-
-                }
-            }
-
-            function closeEditor(evt) {
-                document.body.classList.remove('nv-noscroll');
-                var editorEl = document.querySelector('.nvEditor');
-                var editorContainerEl = document.querySelector('.nvEditorContainer');
-                isEditorOpen = false;
-                editorContainerEl.classList.add('hide');
-                if (!$(editorEl).data('froala.editor')) {
-                    $(editorEl).froalaEditor('destroy');
-                }
-
-                // if (editorContainerEl) {
-                //     editorContainerEl.remove();
-                // }
+                return editorContainerEl;
 
             }
 
-            function showEditor(target) {
-                addEditor(target);
-                document.body.classList.add('nv-noscroll');
-                var editorEl = document.querySelector('.nvEditor');
-                var editorContainerEl = document.querySelector('.nvEditorContainer');
-                if (editorEl) {
-                    editorEl.appendChild(target);
-                }
-                isEditorOpen = true;
-                // $(editorEl).froalaEditor();
-                if (!$(editorEl).data('froala.editor')) {
-                    $(editorEl).froalaEditor();
-                }
-                editorContainerEl.classList.remove('hide');
 
-            }
+            function addPreview(target) {
+                //create previewContainer
 
-            function mouseEnterHandler(evt) {
-                if (!isEditorOpen) {
-                    if (evt.target) {
-                        addClass(evt.target, 'nvCustom-el-hovered');
-                    }
-                }
+                var previewEl = document.createElement('span');
+                previewEl.setAttribute('class', 'fr-view');
+                previewEl.setAttribute('id', 'nvPreview-editor');
+                previewEl.appendChild(target.cloneNode(true));
+
+                target.parentNode.insertBefore(previewEl, target);
+
+                return previewEl;
+
             }
 
             function addAttribute(element, nvAttr) {
                 if (element && nvAttr) {
                     element.setAttribute(nvAttr, getToolTipData(element));
                 }
-            }
-
-            function removeAttribute(attr) {
-                const elArray = document.querySelectorAll('[' + attr + ']');
-                elArray.forEach(function (element) {
-                    element.removeAttribute(attr);
-                }, this);
             }
 
             function addClass(element, nvClass) {
@@ -290,9 +396,24 @@
                     element.classList.remove(nvClass);
                 }, this);
             }
-            return initialize;
+
+            function removeAttribute(attr) {
+                const elArray = document.querySelectorAll('[' + attr + ']');
+                elArray.forEach(function (element) {
+                    element.removeAttribute(attr);
+                }, this);
+            }
+
+            function postMessage(msg) {
+                parent.postMessage(msg, document.referrer);
+            }
+            return {
+                initialize: initialize,
+                closeEditor: closeEditor,
+                submitEditor: submitEditor
+            };
         })();
     });
 }).call(this);
 
-nvABTest();
+nvABTest.initialize();
