@@ -107,8 +107,6 @@
     document.body.addEventListener('mouseover', mouseEnterHandler);
     document.body.addEventListener('click', mouseClickHandler);
 
-
-
     function addEditor(target) {
 
         //create editor container element
@@ -131,9 +129,6 @@
 
 
     }
-
-
-
 
     var isEditorOpen = false;
 
@@ -255,7 +250,6 @@
             element.classList.remove(nvClass);
         }, this);
     }
-
 
 })(self, document);
 
