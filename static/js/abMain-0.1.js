@@ -116,18 +116,18 @@
                                 right: 0;
                                 left: 0;
                                 bottom: 0;
-                                z-index: 1030;
+                                // z-index: 1030;
                                 align-items: center;
                                 justify-content: center;
                             }
                             .nvEditorContainer .nvEditor{
                                     position: absolute;
-                                    z-index: 1031;
+                                    // z-index: 1031;
                                     max-width: 900px;
                             }
                             .nvEditorContainer .nvEditorClose{
                                     position: absolute;
-                                    z-index: 1031;
+                                    // z-index: 1031;
                                     top:100px;
                                     right:0;
                                     // height:50px;
@@ -136,7 +136,7 @@
                             }
                             .nvEditorContainer .nvEditorSubmit{
                                     position: absolute;
-                                    z-index: 1031;
+                                    // z-index: 1031;
                                     top:100px;
                                     right:80px;
                             }
@@ -416,4 +416,6 @@
     });
 }).call(this);
 
-nvABTest.initialize();
+window.addEventListener('DOMContentLoaded', function () {
+    nvABTest.initialize();
+})
