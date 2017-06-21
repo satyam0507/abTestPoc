@@ -1,38 +1,55 @@
-function selectorQuery(node) {
+function selectorQuery(node)  {
+    var ignoreClassList = ["over", "hover", "active", "selected", "scrolled"];
     if (typeof node !== 'object') {
         throw new Error('expects dom node')
     }
 
-    var selector = ''
+    var selector = '';
+
 
     if (node.nodeName === 'HTML') {
         return 'html'
     }
 
-    do {
-
+    do { 
+        var elSelector = '';
         if (node.nodeName === 'HTML' | node.nodeName === '#document') {
+            selector += elSelector;
             break;
         }
 
         if (node.id) {
-            selector += ' #' + node.id
+            elSelector += ' #' + node.id
+            selector += elSelector;
             break;
         }
 
         if (node.nodeName === 'BODY') {
-            selector += ' ' + 'body'
+            elSelector += ' ' + 'body'
+            selector += elSelector;
             continue;
         }
 
         // refactor me *dying cough*
         if (node.className) {
-            selector += ' ' + node.nodeName.toLowerCase() + (node.className.trim().split(/\s+/).map(function (x) {
-                return '.' + x.replace('.', '\\\\.')
-            }).join('')) + ':nth-child(' + getNth(node) + ')'
+            elSelector += ' ' + node.nodeName.toLowerCase() + (node.className.trim().split(/\s+/).map(function (x) {
+                if (ignoreClassList.indexOf(x) === -1) {
+                    return '.' + x.replace('.', '\\\\.');
+                }
+                return '';
+            }).join(''));
+
+            if (node.parentNode.childNodes.length > 1 && node.parentNode.querySelectorAll(elSelector).length > 1) {
+                elSelector += ':nth-child(' + getdata.getNth(node) + ')';
+            }
         } else {
-            selector += ' ' + node.nodeName.toLowerCase() + ':nth-child(' + getNth(node) + ')'
+            elSelector += ' ' + node.nodeName.toLowerCase();
+            if (node.parentNode.childNodes.length > 1 && node.parentNode.querySelectorAll(elSelector).length > 1) {
+                elSelector += ':nth-child(' + getdata.getNth(node) + ')';
+            }
         }
+
+        selector += elSelector;
 
     } while (node = node.parentNode)
 
