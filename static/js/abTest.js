@@ -23,7 +23,7 @@ var userPageDomain = '';
 function getPageData(uid) {
     return firebase.database().ref('user/' + uid + '/config').once('value').then(function (res) {
         userPageDomain = res.val().pageUrl;
-        return userPageDomain + '?check=1&preview=1';
+        return userPageDomain + '?check=1';
     }).catch(function (err) {
         return err;
     })
