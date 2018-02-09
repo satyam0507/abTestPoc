@@ -22,12 +22,34 @@ app.set('view engine', '.hbs');
 
 app.get('/', (req, res) => {
     res.render('index');
-})
+});
 
 app.get('/abTest', (req, res) => {
     res.render('abTest', { abTest: true });
+});
+
+app.get('/chatbot', (req, res) => {
+    res.render('chatbot', { chatbot: true });
 })
+
+app.get('/api/:name', function (req, res) {
+    var options = {
+        root: __dirname + '/chatbot/',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    }; 
+    var fileName = req.params.name;
+    res.sendFile(fileName, options, function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('Sent:', fileName);
+        }
+    });
+});
 
 app.listen(port, () => {
     console.log('running on port :: ' + port);
-})
+});
